@@ -5,7 +5,7 @@ Una API simple para consumir imformacion sobre mi curriculum, a su vez que es un
 
 - Accede a la informacion relacionada de mi contacto
 - Utilizala en Postman o el cliente que desees
-- Mandame un mensaje mediante la api. Lo voy a recibir! 🙂
+- Mandame un mensaje mediante la api. Lo voy a recibir! 🙂  [WIP]
 
 ## Como consumirla:
 
