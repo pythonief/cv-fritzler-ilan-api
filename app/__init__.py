@@ -1,9 +1,12 @@
 from flask import Flask
 from flask.json import jsonify
-from configuration import environs
+from flask_sqlalchemy import SQLAlchemy
+from config import load_config
 
 app = Flask(__name__)
-app.config.from_object(environs.load_config())
+app.config.from_object(load_config())
+
+db = SQLAlchemy(app)
 
 
 @app.route('/')
@@ -14,6 +17,8 @@ def home_page():
     }
     return jsonify(response), 200
 
+from app.mod_messages.controllers import mod_messages as message_module
 
-if __name__ == '__main__':
-    app.run()
+app.register_blueprint(message_module)
+
+db.create_all()
