@@ -28,6 +28,8 @@ Capos de formulario requeridos:
 | email | Email del remitente |✅|
 | message | El mensaje a enviar |✅|
 | phone | Telefono de contacto del remitente |❌
+
+
 Recibe mediante peticion POST un formulario con los campos name, email, message y phone(opcional) el cual sera guardado como registro en la base de datos y enviara un email tanto remitente como al receptor
 
 ## Si se desea clonar el repositorio
