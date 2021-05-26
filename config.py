@@ -30,7 +30,7 @@ class DevConfig(Config):
     ENV = 'development'
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = load_secret('DB__POSTGRES_URI')
+    SQLALCHEMY_DATABASE_URI = load_secret('DB_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     
 
