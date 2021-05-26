@@ -12,14 +12,14 @@ basedir = path.abspath(
 )
 load_dotenv(path.join(basedir, '.env'))
 
-
-def load_secret(key):
-    return environ.get(key)
-
-
 class Config:
     """Base config."""
-    SECRET_KEY = load_secret('SECRET_KEY')
-    # SESSION_COOKIE_NAME = load_secret('SESSION_COOKIE_NAME') #TODO
-    STATIC_FOLDER = 'static'
-    TEMPLATES_FOLDER = 'templates'
+    def __init__(self):
+        SECRET_KEY = self.load_secret('SECRET_KEY')
+        # SESSION_COOKIE_NAME = load_secret('SESSION_COOKIE_NAME') #TODO
+        STATIC_FOLDER = 'static'
+        TEMPLATES_FOLDER = 'templates'
+
+    @staticmethod
+    def load_secret(key):
+        return environ.get(key)
