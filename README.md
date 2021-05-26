@@ -1,2 +1,3 @@
 # cv-fritzler-ilan-api
-A simple flask API to consume my resume (cv). A different way to know me to new people in the IT world
+Una api simple en flask para consumir mi curriculum vitae asi como tambien una manera mas interesante de permitir 
+que otros desarrolladores y empresas me conozcan
