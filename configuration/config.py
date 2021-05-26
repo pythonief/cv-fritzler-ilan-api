@@ -2,7 +2,14 @@
 from os import environ, path, pardir
 from dotenv import load_dotenv
 
-basedir = path.abspath(path.join(path.abspath(path.dirname(__file__)), pardir))
+basedir = path.abspath(
+    path.join(
+        path.abspath(
+            path.dirname(__file__)
+        ), 
+        pardir # == '..'
+    )
+)
 load_dotenv(path.join(basedir, '.env'))
 
 
