@@ -1,7 +1,10 @@
 from flask import Flask
 from flask.json import jsonify
+from config import load_config
 
 app = Flask(__name__)
+app.config.from_object(load_config())
+
 
 @app.route('/')
 def home_page():
@@ -11,5 +14,6 @@ def home_page():
     }
     return jsonify(response)
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
