@@ -1,11 +1,13 @@
 from flask import Flask
 from flask.json import jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 from config import load_config
 
 app = Flask(__name__)
 app.config.from_object(load_config())
 
+mail = Mail(app)
 db = SQLAlchemy(app)
 
 
