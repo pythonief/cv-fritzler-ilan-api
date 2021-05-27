@@ -1,7 +1,4 @@
-from logging import error
 from flask import Blueprint, request, jsonify
-
-from app import db
 
 from app.mod_messages.models import MessageModel
 
@@ -32,9 +29,9 @@ def send_message():
     return jsonify(
         {
             'message': '¡Me pone muy contento que hayas llegado hasta acá! ' +
-                    'Acabo de mandarte por correo -si es que lo incluiste ;)- ' +
-                    'mi cv adjunto! No puedo esperar más para poder conocernos y que hablemos ' + 
-                    'del apasionante mundo de la programación. Un saludo cibernauta!',
+            'Acabo de mandarte por correo -si es que lo incluiste ;)- ' +
+            'mi cv adjunto! No puedo esperar más para poder conocernos y que hablemos ' +
+            'del apasionante mundo de la programación. Un saludo cibernauta!',
             'status_code': 201
         }
     ), 201

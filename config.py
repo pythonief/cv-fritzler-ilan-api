@@ -26,7 +26,7 @@ class EmailConfig:
     MAIL_USE_SSL= True
     MAIL_USERNAME = load_secret('MAIL_USERNAME')
     MAIL_PASSWORD = load_secret('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = load_secret('MAIL_USERNAME')
+    MAIL_DEFAULT_SENDER = MAIL_USERNAME
 
 class ProdConfig(Config):
     ENV = 'production'

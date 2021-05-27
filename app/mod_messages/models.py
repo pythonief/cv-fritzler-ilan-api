@@ -41,13 +41,17 @@ class MessageModel(BaseModel):
 
     def send_email(self):
         message_to_recipient = Message(
-            subject='Fritzler Ilan Emanuel CV',
-            recipients=[self.email, ],
-            html= '<strong>Respuesta</strong>'
+            subject = f'Fritzler Ilan Emanuel CV para {self.name}',
+            recipients=[
+                self.email,
+            ],
+            html='<strong>Respuesta</strong>'
         )
         message_to_me = Message(
-            subject = f'Mensaje de {self.name} Email: {self.email[0:6]}...',
-            recipients = [load_secret('MAIL_USERNAME'), ],
+            subject=f'{self.name} Email: {self.email[0:12]}...',
+            recipients=[
+                load_secret('MAIL_USERNAME'),
+            ],
             body=self.message
         )
         mail.send(message_to_me)
