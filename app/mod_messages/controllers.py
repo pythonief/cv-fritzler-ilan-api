@@ -1,5 +1,11 @@
-from flask import Blueprint, request, jsonify
-
+from os import name
+from flask import (
+    Blueprint,
+    request,
+    jsonify
+)
+from flask import copy_current_request_context
+import threading
 from app.mod_messages.models import MessageModel
 
 mod_messages = Blueprint('messages', __name__, url_prefix='/message')
@@ -22,10 +28,17 @@ def send_message():
         return jsonify(errors), 400
 
     # Save the message in the db
+    @copy_current_request_context
+    def send_message():
+        valid_message.send_email()
 
     valid_message.save()
-    valid_message.send_email()
 
+    sender = threading.Thread(
+        name='mail_sender', 
+        target=send_message
+    )
+    sender.start()
     return jsonify(
         {
             'message': '¡Me pone muy contento que hayas llegado hasta acá! ' +
