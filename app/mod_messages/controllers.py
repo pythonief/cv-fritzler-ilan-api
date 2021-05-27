@@ -1,8 +1,11 @@
-from logging import error
-from flask import Blueprint, request, jsonify
-
-from app import db
-
+from os import name
+from flask import (
+    Blueprint,
+    request,
+    jsonify
+)
+from flask import copy_current_request_context
+import threading
 from app.mod_messages.models import MessageModel
 
 mod_messages = Blueprint('messages', __name__, url_prefix='/message')
@@ -12,25 +15,36 @@ mod_messages = Blueprint('messages', __name__, url_prefix='/message')
 def send_message():
     form = request.form
 
-    new_message = {
-        'name': form.get('name', ''),
-        'phone': form.get('phone', ''),
-        'email': form.get('email', ''),
-        'message': form.get('message', '')
-    }
-    valid, errors = MessageModel.is_valid(new_message)
-    print(errors)
-    print(valid)
-    if not valid:
-        return jsonify(errors), 400
-    
-    # Save the message in the db
-    message = MessageModel(
-        new_message.get('name'),
-        new_message.get('phone'),
-        new_message.get('email'),
-        new_message.get('message')
+    valid_message, errors = MessageModel.is_valid(
+        {
+            'name': form.get('name', ''),
+            'phone': form.get('phone', ''),
+            'email': form.get('email', ''),
+            'message': form.get('message', '')
+        }
     )
-    message.save()
 
-    return jsonify(new_message), 201
+    if not valid_message:
+        return jsonify(errors), 400
+
+    # Save the message in the db
+    @copy_current_request_context
+    def send_message():
+        valid_message.send_email()
+
+    valid_message.save()
+
+    sender = threading.Thread(
+        name='mail_sender', 
+        target=send_message
+    )
+    sender.start()
+    return jsonify(
+        {
+            'message': '¡Me pone muy contento que hayas llegado hasta acá! ' +
+            'Acabo de mandarte por correo -si es que lo incluiste ;)- ' +
+            'mi cv adjunto! No puedo esperar más para poder conocernos y que hablemos ' +
+            'del apasionante mundo de la programación. Un saludo cibernauta!',
+            'status_code': 201
+        }
+    ), 201

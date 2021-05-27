@@ -20,16 +20,24 @@ class Config:
         TEMPLATES_FOLDER = 'templates'
     
 
+class EmailConfig:
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL= True
+    MAIL_USERNAME = load_secret('MAIL_USERNAME')
+    MAIL_PASSWORD = load_secret('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = MAIL_USERNAME
+
 class ProdConfig(Config):
     ENV = 'production'
     DEBUG = False
     TESTING = False
 
 
-class DevConfig(Config):
+class DevConfig(Config, EmailConfig):
     ENV = 'development'
     DEBUG = True
-    TESTING = True
+    TESTING = False
     SQLALCHEMY_DATABASE_URI = load_secret('DB_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     
