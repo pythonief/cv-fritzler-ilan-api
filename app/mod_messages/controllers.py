@@ -32,13 +32,14 @@ def send_message():
     def send_message():
         valid_message.send_email()
 
-    valid_message.save()
 
     sender = threading.Thread(
         name='mail_sender', 
         target=send_message
     )
     sender.start()
+
+    valid_message.save()
     return jsonify(
         {
             'message': '¡Me pone muy contento que hayas llegado hasta acá! ' +

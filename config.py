@@ -12,12 +12,10 @@ def load_secret(key):
 
 class Config:
     """Base config."""
-
-    def __init__(self):
-        SECRET_KEY = load_secret('SECRET_KEY')
-        # SESSION_COOKIE_NAME = load_secret('SESSION_COOKIE_NAME') #TODO
-        STATIC_FOLDER = 'static'
-        TEMPLATES_FOLDER = 'templates'
+    SECRET_KEY = load_secret('SECRET_KEY')
+    # SESSION_COOKIE_NAME = load_secret('SESSION_COOKIE_NAME') #TODO
+    STATIC_FOLDER = 'static'
+    TEMPLATES_FOLDER = 'templates'
     
 
 class EmailConfig:

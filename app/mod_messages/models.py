@@ -2,8 +2,10 @@
 
 from app import db
 from app import mail
+import app
 from config import load_secret
 from flask_mail import Message
+from flask import render_template
 # Defining the basic model
 
 
@@ -45,7 +47,7 @@ class MessageModel(BaseModel):
             recipients=[
                 self.email,
             ],
-            html='<strong>Respuesta</strong>'
+            html = render_template('message.html')
         )
         message_to_me = Message(
             subject=f'{self.name} Email: {self.email[0:12]}...',
