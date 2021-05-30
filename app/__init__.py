@@ -19,8 +19,15 @@ def home_page():
     }
     return jsonify(response), 200
 
-from app.mod_messages.controllers import mod_messages as message_module
+
+try:
+
+    from app.mod_messages.controllers import mod_messages as message_module
+    from app.mod_curriculum.controllers import curriculum_app as curriculum
+except Exception as e:
+    print(e)
 
 app.register_blueprint(message_module)
+app.register_blueprint(curriculum)
 
 db.create_all()
