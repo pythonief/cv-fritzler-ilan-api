@@ -47,7 +47,7 @@ class MessageModel(BaseModel):
             recipients=[
                 self.email,
             ],
-            html = render_template('message.html')
+            html = render_template('mod_messages/mail.html')
         )
         message_to_me = Message(
             subject=f'{self.name} Email: {self.email[0:12]}...',
