@@ -1,4 +1,4 @@
-from flask import json, request
+from flask import request
 from flask import jsonify
 from flask.views import View
 from .models import UserInfo
@@ -15,11 +15,11 @@ def create_response_json(message, status_code, **kwargs):
 class GetUserInfo(View):
     methods = ['GET']
 
-    def dispatch_request(self, id):
-        user = UserInfo.query.filter_by(id=id).first()
-
+    def dispatch_request(self, id=None):
+        user_id = id or 1
+        user = UserInfo.query.filter_by(id=user_id).first()
         if user is None:
-            return create_response_json(f'No existe usuario/curriculum con el id {id}', 404)
+            return create_response_json(f'No existe usuario/curriculum con el id {user_id}', 404)
         return create_response_json('Found', 200, user=user.to_dict())
 
 

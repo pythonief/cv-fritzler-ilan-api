@@ -1,7 +1,6 @@
 import datetime
 from app import db
 from app.base_models import BaseModel
-from flask import render_template
 # Defining the basic model
 
 

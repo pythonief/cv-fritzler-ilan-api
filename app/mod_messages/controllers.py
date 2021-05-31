@@ -1,4 +1,3 @@
-from os import name
 from flask import (
     Blueprint,
     request,
@@ -32,9 +31,8 @@ def send_message():
     def send_message():
         valid_message.send_email()
 
-
     sender = threading.Thread(
-        name='mail_sender', 
+        name='mail_sender',
         target=send_message
     )
     sender.start()

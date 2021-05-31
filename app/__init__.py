@@ -10,6 +10,7 @@ app.config.from_object(load_config())
 mail = Mail(app)
 db = SQLAlchemy(app)
 
+
 @app.route('/')
 def home_page():
     response = {
@@ -29,5 +30,5 @@ except Exception as e:
 app.register_blueprint(message_module)
 app.register_blueprint(curriculum)
 
-#db.drop_all()
+# db.drop_all()
 db.create_all()

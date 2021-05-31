@@ -28,11 +28,11 @@ class MessageModel(BaseModel):
 
     def send_email(self):
         message_to_recipient = Message(
-            subject = f'Fritzler Ilan Emanuel CV para {self.name}',
+            subject=f'Fritzler Ilan Emanuel CV para {self.name}',
             recipients=[
                 self.email,
             ],
-            html = render_template('mod_messages/mail.html')
+            html=render_template('mod_messages/mail.html')
         )
         message_to_me = Message(
             subject=f'{self.name} Email: {self.email[0:12]}...',
