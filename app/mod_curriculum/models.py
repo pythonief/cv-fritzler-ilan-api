@@ -43,11 +43,12 @@ class UserInfo(BaseModel):
         self.city = city
         self.about = about
 
-    def to_dict(self):
-        return dict(full_name=self.full_name, descript=self.descript,
+    def to_dict(self, request=None):
+        d = dict(full_name=self.full_name, descript=self.descript,
                     adress=self.adress, email=self.email,
-                    phone=self.phone, nationality=self.nationality,
+                    nationality=self.nationality,
                     dob=self.dob, city=self.city, about=self.about)
+        return d
 
     def save(self):
         try:
@@ -162,6 +163,5 @@ class Reference(BaseModel):
     )
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(80), nullable=False)
-    phone = db.Column(db.String(80), nullable=False)
     company = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200), nullable=False)
