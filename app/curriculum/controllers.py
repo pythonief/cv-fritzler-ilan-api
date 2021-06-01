@@ -3,9 +3,11 @@ from flask import (
     request
 )
 from app import db
-from . import curriculum
 from app.curriculum.models import UserInfo, Course, Job, Skill, Reference, Language
 # Views
+from flask import Blueprint
+
+curriculum = Blueprint('curriculum', __name__, url_prefix='/api')
 
 def create_response_json(message, status_code, **kwargs):
     return jsonify({
