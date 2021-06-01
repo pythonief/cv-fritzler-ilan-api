@@ -4,10 +4,10 @@ from flask import (
 )
 from flask import copy_current_request_context
 import threading
-from app.mod_messages.models import MessageModel
-from . import mod_messages
+from app.messages.models import MessageModel
+from . import messages
 
-@mod_messages.route('/send', methods=['POST'])
+@messages.route('/send', methods=['POST'])
 def send_message():
     form = request.form
 

@@ -3,8 +3,8 @@ from flask import (
     request
 )
 from app import db
-from . import curriculum_app
-from app.mod_curriculum.models import UserInfo, Course, Job, Skill, Reference, Language
+from . import curriculum
+from app.curriculum.models import UserInfo, Course, Job, Skill, Reference, Language
 # Views
 
 def create_response_json(message, status_code, **kwargs):
@@ -14,8 +14,8 @@ def create_response_json(message, status_code, **kwargs):
         **kwargs
     }), status_code
 
-@curriculum_app.route('/cv', methods=['GET'])
-@curriculum_app.route('/cv/<id>', methods=['GET'])
+@curriculum.route('/cv', methods=['GET'])
+@curriculum.route('/cv/<id>', methods=['GET'])
 def get_user_info(id=1):
     user = UserInfo.query.filter_by(id=id).first()
     if user is None:
@@ -23,7 +23,7 @@ def get_user_info(id=1):
     return create_response_json('Found', 200, user=user.to_dict(request))
 
 
-@curriculum_app.route('/cv', methods=['POST'])
+@curriculum.route('/cv', methods=['POST'])
 def post_user_info(id=None):
     user_valid, errors = UserInfo.create_user(
         request.form.get('full_name', None),
@@ -42,8 +42,8 @@ def post_user_info(id=None):
     else:
         return jsonify(errors), 400
 
-@curriculum_app.route('/cv', methods=['PUT'])
-@curriculum_app.route('/cv/<id>', methods=['PUT'])
+@curriculum.route('/cv', methods=['PUT'])
+@curriculum.route('/cv/<id>', methods=['PUT'])
 def update_user_info(id=1):
     user = UserInfo.query.filter_by(id=id).first()
     user.full_name = request.form.get('full_name', user.full_name)
@@ -60,7 +60,7 @@ def update_user_info(id=1):
     return create_response_json('user updated!', 201, user=user.to_dict(request))
 
 
-@curriculum_app.route('/cv/<id>', methods=['DELETE'])
+@curriculum.route('/cv/<id>', methods=['DELETE'])
 def delete_user_info(id):
     user = UserInfo.query.filter_by(id=id).first()
     if user:
