@@ -39,5 +39,8 @@ def signup():
 @auth.route('/logout', methods=['POST'])
 @login_required
 def logout():
-    logout_user()
+    try:
+        logout_user()
+    except Exception as e:
+        return create_json_response('Error', 400, error=e)
     return create_json_response('Success Logout', 200)

@@ -6,6 +6,7 @@ from flask import Blueprint
 
 curriculum = Blueprint('curriculum', __name__, url_prefix='/api')
 
+
 @curriculum.route('/info', methods=['GET'])
 def get_info():
     info = {
@@ -20,6 +21,9 @@ def get_info():
             'in': 'Mar del Plata, Buenos Aires, Argentina',
             'dob': '15 June 1994',
         },
-        'nationality': 'Argentinian'
+        'nationality': 'Argentinian',
+        'about': 'Passionate student of Programming with a special interest in ' +
+        'the back-end stack. I want to get surrounded for new technologies to ' +
+        'improve my skills. I’ve achieved knowledge of Python in the last 6 months.'
     }
     return create_json_response('Success', 200, personal_information=info)
