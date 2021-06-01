@@ -1,14 +1,11 @@
 from flask import (
-    Blueprint,
     request,
     jsonify
 )
 from flask import copy_current_request_context
 import threading
 from app.mod_messages.models import MessageModel
-
-mod_messages = Blueprint('messages', __name__, url_prefix='/message')
-
+from . import mod_messages
 
 @mod_messages.route('/send', methods=['POST'])
 def send_message():
