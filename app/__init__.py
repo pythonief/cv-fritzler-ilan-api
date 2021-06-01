@@ -14,14 +14,14 @@ db = SQLAlchemy(app)
 try:
     from app.auth.controllers import auth as auth_app
     from app.messages.controllers import messages as message_app
-    # from app.controllers.curriculum import curriculum as curriculum_app
+    from app.curriculum.controllers import curriculum
     from app.main.controllers import main as main_app
 except Exception as e:
     print(e)
 
 app.register_blueprint(auth_app)
 app.register_blueprint(message_app)
-# app.register_blueprint(curriculum_app)
+app.register_blueprint(curriculum)
 app.register_blueprint(main_app)
 
 login_manager = LoginManager()
