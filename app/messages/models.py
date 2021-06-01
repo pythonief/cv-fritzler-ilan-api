@@ -2,26 +2,11 @@
 
 from app import db
 from app import mail
-import app
 from config import load_secret
 from flask_mail import Message
 from flask import render_template
 # Defining the basic model
-
-
-class BaseModel(db.Model):
-
-    __abstract__ = True
-
-    id = db.Column(db.Integer, primary_key=True)
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-
-    def save(self):
-        try:
-            db.session.add(self)
-            db.session.commit()
-        except Exception as e:
-            print(e)
+from app.base_models import BaseModel
 
 
 class MessageModel(BaseModel):
@@ -43,11 +28,11 @@ class MessageModel(BaseModel):
 
     def send_email(self):
         message_to_recipient = Message(
-            subject = f'Fritzler Ilan Emanuel CV para {self.name}',
+            subject=f'Fritzler Ilan Emanuel CV para {self.name}',
             recipients=[
                 self.email,
             ],
-            html = render_template('message.html')
+            html=render_template('mod_messages/mail.html')
         )
         message_to_me = Message(
             subject=f'{self.name} Email: {self.email[0:12]}...',

@@ -1,17 +1,16 @@
-from os import name
+import threading
 from flask import (
-    Blueprint,
     request,
     jsonify
 )
+from flask import Blueprint
 from flask import copy_current_request_context
-import threading
-from app.mod_messages.models import MessageModel
 
-mod_messages = Blueprint('messages', __name__, url_prefix='/message')
+from app.messages.models import MessageModel
 
+messages = Blueprint('messages', __name__, url_prefix='/message')
 
-@mod_messages.route('/send', methods=['POST'])
+@messages.route('/send', methods=['POST'])
 def send_message():
     form = request.form
 
@@ -32,9 +31,8 @@ def send_message():
     def send_message():
         valid_message.send_email()
 
-
     sender = threading.Thread(
-        name='mail_sender', 
+        name='mail_sender',
         target=send_message
     )
     sender.start()
