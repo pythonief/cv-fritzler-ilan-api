@@ -34,6 +34,11 @@ def get_info():
     return create_json_response('Success', 200, personal_information=info)
 
 
+"""
+    Skills Views
+"""
+
+
 @curriculum.route('/skills', methods=['GET'])
 def get_skills():
     global skills_schema
@@ -43,7 +48,8 @@ def get_skills():
 
     return create_json_response('Success', 200, skills=output)
 
-@curriculum.route('/skills/<id>', methods=['GET'])
+
+@curriculum.route('/skills/<int:id>', methods=['GET'])
 def get_skill(id):
     global skill_schema
     try:
@@ -64,10 +70,29 @@ def set_skill():
     name = request.form.get('name', None)
     description = request.form.get('description', None)
     valid_skill, list_error = Skill.create_skill(name, description)
-    
+
     if not valid_skill:
         return create_json_response('Bad request', 400, errors=list_error)
-    
+
     valid_skill.save()
     skill = skill_schema.dump(valid_skill)
-    return create_json_response('Success', 201,skill=skill)
+    return create_json_response('Success', 201, skill=skill)
+
+
+@curriculum.route('/skills/<int:id>', methods=['PUT'])
+@login_required
+def update_skill(id):
+    global skill_schema
+    try:
+        skill = Skill.query.filter_by(id=id).first()
+        if skill:
+            skill.name = request.form.get('name', skill.name)
+            skill.description = request.form.get(
+                'description', skill.description)
+
+            skill.save()
+            output = skill_schema.dump(skill)
+            return create_json_response('Updated', 200, skill=output)
+        return create_json_response('Not Found', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
