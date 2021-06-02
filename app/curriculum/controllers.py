@@ -96,3 +96,18 @@ def update_skill(id):
         return create_json_response('Not Found', 404)
     except Exception as e:
         return create_json_response('Error', 404, error=e)
+
+
+@curriculum.route('/skills/<int:id>', methods=['DELETE'])
+@login_required
+def delete_skill(id):
+    global skill_schema
+    try:
+        skill = Skill.query.filter_by(id=id).first()
+        if skill:
+            skill.delete()
+            output = skill_schema.dump(skill)
+            return create_json_response('Deleted', 200, skill=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
