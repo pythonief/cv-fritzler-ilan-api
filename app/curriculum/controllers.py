@@ -1,4 +1,3 @@
-import json
 from app import db
 from app.utils import create_json_response
 from app.curriculum.models import Skill, SkillSchema
@@ -44,6 +43,18 @@ def get_skills():
 
     return create_json_response('Success', 200, skills=output)
 
+@curriculum.route('/skills/<id>', methods=['GET'])
+def get_skill(id):
+    global skill_schema
+    try:
+        skill = Skill.query.filter_by(id=id).first()
+        if skill:
+            output = skill_schema.dump(skill)
+            return create_json_response('Found', 200, skill=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
+
 
 @curriculum.route('/skills/add', methods=['POST'])
 @login_required
@@ -60,4 +71,3 @@ def set_skill():
     valid_skill.save()
     skill = skill_schema.dump(valid_skill)
     return create_json_response('Success', 201,skill=skill)
-
