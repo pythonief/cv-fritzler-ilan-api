@@ -3,13 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from config import load_config
 from flask_login import LoginManager
-
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 app.config.from_object(load_config())
 
 mail = Mail(app)
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 try:
     from app.auth.controllers import auth as auth_app

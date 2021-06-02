@@ -18,7 +18,6 @@ def login_post():
     if user and user.check_password(password):
         login_user(user, remember=remember)
         return create_json_response('Success', 200)
-
     return create_json_response('Check your credentials and try again', 401)
 
 

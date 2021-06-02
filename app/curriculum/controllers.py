@@ -1,10 +1,16 @@
+import json
 from app import db
 from app.utils import create_json_response
-from app.curriculum.models import Course, Job, Skill, Reference, Language
-from flask import Blueprint
+from app.curriculum.models import Skill, SkillSchema
+from flask import Blueprint, request
+from flask_login import login_required
 # Views
 
 curriculum = Blueprint('curriculum', __name__, url_prefix='/api')
+
+# MarshMallow Schemas
+skill_schema = SkillSchema()
+skills_schema = SkillSchema(many=True)
 
 
 @curriculum.route('/info', methods=['GET'])
@@ -27,3 +33,31 @@ def get_info():
         'improve my skills. I’ve achieved knowledge of Python in the last 6 months.'
     }
     return create_json_response('Success', 200, personal_information=info)
+
+
+@curriculum.route('/skills', methods=['GET'])
+def get_skills():
+    global skills_schema
+
+    skills = Skill.query.all()
+    output = skills_schema.dump(skills)
+
+    return create_json_response('Success', 200, skills=output)
+
+
+@curriculum.route('/skills/add', methods=['POST'])
+@login_required
+def set_skill():
+    global skill_schema
+
+    name = request.form.get('name', None)
+    description = request.form.get('description', None)
+    valid_skill, list_error = Skill.create_skill(name, description)
+    
+    if not valid_skill:
+        return create_json_response('Bad request', 400, errors=list_error)
+    
+    valid_skill.save()
+    skill = skill_schema.dump(valid_skill)
+    return create_json_response('Success', 201,skill=skill)
+
