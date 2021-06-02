@@ -1,6 +1,6 @@
-from app import db
 from app.utils import create_json_response
 from app.curriculum.models import Skill, SkillSchema
+from app.curriculum.models import Language, LanguageSchema
 from flask import Blueprint, request
 from flask_login import login_required
 # Views
@@ -10,6 +10,8 @@ curriculum = Blueprint('curriculum', __name__, url_prefix='/api')
 # MarshMallow Schemas
 skill_schema = SkillSchema()
 skills_schema = SkillSchema(many=True)
+language_schema = LanguageSchema()
+languages_schema = LanguageSchema(many=True)
 
 
 @curriculum.route('/info', methods=['GET'])
@@ -111,3 +113,91 @@ def delete_skill(id):
         return create_json_response('', 404)
     except Exception as e:
         return create_json_response('Error', 404, error=e)
+
+
+"""
+    Skills Views
+"""
+
+
+@curriculum.route('/langs', methods=['GET'])
+def get_lang():
+    global language_schema
+
+    langs = Language.query.all()
+    output = languages_schema.dump(langs)
+
+    return create_json_response('Success', 200, langs=output)
+
+
+""" 
+Busca un idioma por nombre o por id 
+"""
+
+
+@curriculum.route('/langs/<lang>', methods=['GET'])
+def get_one_lang(lang):
+    global language_schema
+    try:
+        int(lang)
+        language = Language.query.filter_by(id=lang).first()
+    except Exception:
+        language = Language.query.filter_by(name=lang).first()
+
+    if language:
+        output = language_schema.dump(language)
+        return create_json_response('Found', 200, language=output)
+    return create_json_response('', 404)
+
+
+@curriculum.route('langs/add', methods=['POST'])
+@login_required
+def add_lang():
+    global language_schema
+
+    name = request.form.get('name', None)
+    description = request.form.get('description', None)
+
+    new_language, errors = Language.create_lang(name, description)
+
+    if not errors:
+        new_language.save()
+        output = language_schema.dump(new_language)
+        return create_json_response('Success', 201, created=output)
+    return create_json_response('Fields Missing', 400, errors=errors)
+
+
+@curriculum.route('langs/<lang>', methods=['PUT'])
+@login_required
+def update_lang(lang):
+    global language_schema
+    try:
+        int(lang)
+        language = Language.query.filter_by(id=lang).first()
+    except Exception as e:
+        language = Language.query.filter_by(name=lang).first()
+    if not language:
+        return create_json_response('', 404)
+
+    language.name = request.form.get('name', language.name)
+    language.description = request.form.get(
+        'description', language.description)
+    language.save()
+    output = language_schema.dump(language)
+    return create_json_response('Updated', 200, updated=output)
+
+
+@curriculum.route('langs/<lang>', methods=['DELETE'])
+@login_required
+def delete_lang(lang):
+    global language_schema
+    try:
+        int(lang)
+        language = Language.query.filter_by(id=lang).first()
+    except Exception as e:
+        language = Language.query.filter_by(name=lang).first()
+    if not language:
+        return create_json_response('', 404)
+    language.delete()
+    output = language_schema.dump(language)
+    return create_json_response('Deleted', 200, deleted=output)

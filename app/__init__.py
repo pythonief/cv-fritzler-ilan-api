@@ -1,10 +1,10 @@
-from app.auth.models import User
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from config import load_config
 from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
+
 
 app = Flask(__name__)
 app.config.from_object(load_config())
@@ -26,7 +26,7 @@ try:
 except Exception as e:
     print(e)
 
-
+from app.auth.models import User
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(app)

@@ -56,6 +56,22 @@ class Language(BaseModel):
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200), nullable=False)
 
+    @staticmethod
+    def create_lang(name, description):
+        errors = []
+        if not name:
+            errors.append('field name requiered')
+        if not description:
+            errors.append('field description required')
+        if not errors:
+            return Language(name=name, description=description), errors
+        return None, errors
+
+class LanguageSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Language
+        load_instance = True
+
 
 class Reference(BaseModel):
     __tablename__ = 'references'
