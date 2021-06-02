@@ -1,6 +1,8 @@
+from operator import ge
 from app.utils import create_json_response
 from app.curriculum.models import Skill, SkillSchema
 from app.curriculum.models import Language, LanguageSchema
+from app.curriculum.models import Reference, ReferenceSchema
 from flask import Blueprint, request
 from flask_login import login_required
 # Views
@@ -12,6 +14,8 @@ skill_schema = SkillSchema()
 skills_schema = SkillSchema(many=True)
 language_schema = LanguageSchema()
 languages_schema = LanguageSchema(many=True)
+reference_schema = ReferenceSchema()
+references_schema = ReferenceSchema(many=True)
 
 
 @curriculum.route('/info', methods=['GET'])
@@ -116,12 +120,12 @@ def delete_skill(id):
 
 
 """
-    Skills Views
+    Language Views
 """
 
 
 @curriculum.route('/langs', methods=['GET'])
-def get_lang():
+def get_langs():
     global language_schema
 
     langs = Language.query.all()
@@ -201,3 +205,86 @@ def delete_lang(lang):
     language.delete()
     output = language_schema.dump(language)
     return create_json_response('Deleted', 200, deleted=output)
+
+
+"""
+    Reference Views
+"""
+
+
+@curriculum.route('/refs', methods=['GET'])
+def get_refs():
+    global references_schema
+
+    refs = Reference.query.all()
+    output = languages_schema.dump(refs)
+
+    return create_json_response('Success', 200, refs=output)
+
+
+@curriculum.route('/refs/<id>', methods=['GET'])
+def get_ref(id):
+    global reference_schema
+    try:
+        ref = Reference.query.filter_by(id=id).first()
+        if ref:
+            output = reference_schema.dump(ref)
+            return create_json_response('Found', 200, ref=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
+
+
+@curriculum.route('refs/add', methods=['POST'])
+@login_required
+def add_reference():
+    global reference_schema
+
+    name = request.form.get('name', None)
+    description = request.form.get('description', None)
+    company = request.form.get('company', None)
+    email = request.form.get('email', None)
+
+    new_ref, errors = Language.create_lang(name, email, company, description)
+
+    if not errors:
+        new_ref.save()
+        output = reference_schema.dump(new_ref)
+        return create_json_response('Success', 201, created=output)
+    return create_json_response('Fields Missing', 400, errors=errors)
+
+
+@curriculum.route('refs/<lang>', methods=['PUT'])
+@login_required
+def update_lang(id):
+    global reference_schema
+    ref = Reference.query.filter_by(id=id).first()
+
+    if not ref:
+        return create_json_response('', 404)
+
+    ref.name = request.form.get('name', ref.name)
+    ref.email = request.form.get('email', ref.email)
+    ref.company = request.form.get('company', ref.company)
+    ref.description = request.form.get('description', ref.description)
+    ref.save()
+    output = reference_schema.dump(ref)
+    return create_json_response('Updated', 200, updated=output)
+
+
+@curriculum.route('/refs/<id>', methods=['DELETE'])
+def delete_ref(id):
+    global reference_schema
+    try:
+        ref = Reference.query.filter_by(id=id).first()
+        if ref:
+            ref.delete()
+            output = reference_schema.dump(ref)
+            return create_json_response('Deleted', 200, ref=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
+
+"""
+
+"""

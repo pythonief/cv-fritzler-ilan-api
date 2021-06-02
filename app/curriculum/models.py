@@ -80,3 +80,23 @@ class Reference(BaseModel):
     email = db.Column(db.String(80), nullable=False)
     company = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200), nullable=False)
+
+    @staticmethod
+    def create_ref(name, email, company, description):
+        errors = []
+        if not name:
+            errors.append('field name requiered')
+        if not description:
+            errors.append('field description required')
+        if not email:
+            errors.append('field email requiered')
+        if not company:
+            errors.append('field company requiered')
+        if not errors:
+            return Reference(name=name, description=description, email=email, company=company), errors
+        return None, errors
+
+class ReferenceSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Reference
+        load_instance = True
