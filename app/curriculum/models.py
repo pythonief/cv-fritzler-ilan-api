@@ -1,6 +1,7 @@
+from os import error
+from app.utils import create_json_response, date_parser
 from app import db, ma
 from app.base_models import BaseModel
-from flask_login.utils import login_required
 
 # Defining the basic model
 
@@ -25,6 +26,31 @@ class Course(BaseModel):
     date_joined = db.Column(db.DateTime(), nullable=False)
     date_completed = db.Column(db.DateTime(), default=None)
 
+    @staticmethod
+    def create_course(course_name, date_joined, date_completed):
+        errors = []
+        if not course_name:
+            errors.append('field course_name requiered')
+        if not date_joined:
+            errors.append('field date_joined required')
+        if not date_completed:
+            errors.append('field date_completed required')
+        try:
+            date_joined = date_parser(date_joined)
+            date_joined = date_parser(date_completed)
+        except Exception:
+            errors.append(
+                "Date Fields doesn't recognize, expected: 31-12-1970 | 31.12.1970 | 31/12/1970")
+        if not errors:
+            return Course(
+                course_name=course_name, date_joined=date_joined, date_completed=date_completed), errors
+        return None, errors
+
+class CourseSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Course
+        load_instance = True
+
 
 class Skill(BaseModel):
 
@@ -33,7 +59,7 @@ class Skill(BaseModel):
     name = db.Column(db.String(40), nullable=False)
     description = db.Column(db.String(200), nullable=False)
 
-    @staticmethod
+    @ staticmethod
     def create_skill(name, description):
         errors = []
         if not name:
@@ -44,10 +70,12 @@ class Skill(BaseModel):
             return Skill(name=name, description=description), errors
         return None, errors
 
+
 class SkillSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Skill
         load_instance = True
+
 
 class Language(BaseModel):
 
@@ -56,7 +84,7 @@ class Language(BaseModel):
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200), nullable=False)
 
-    @staticmethod
+    @ staticmethod
     def create_lang(name, description):
         errors = []
         if not name:
@@ -66,6 +94,7 @@ class Language(BaseModel):
         if not errors:
             return Language(name=name, description=description), errors
         return None, errors
+
 
 class LanguageSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -81,7 +110,7 @@ class Reference(BaseModel):
     company = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200), nullable=False)
 
-    @staticmethod
+    @ staticmethod
     def create_ref(name, email, company, description):
         errors = []
         if not name:
@@ -95,6 +124,7 @@ class Reference(BaseModel):
         if not errors:
             return Reference(name=name, description=description, email=email, company=company), errors
         return None, errors
+
 
 class ReferenceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

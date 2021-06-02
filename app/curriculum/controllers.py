@@ -3,6 +3,7 @@ from app.utils import create_json_response
 from app.curriculum.models import Skill, SkillSchema
 from app.curriculum.models import Language, LanguageSchema
 from app.curriculum.models import Reference, ReferenceSchema
+from app.curriculum.models import Course, CourseSchema
 from flask import Blueprint, request
 from flask_login import login_required
 # Views
@@ -16,6 +17,8 @@ language_schema = LanguageSchema()
 languages_schema = LanguageSchema(many=True)
 reference_schema = ReferenceSchema()
 references_schema = ReferenceSchema(many=True)
+course_schema = CourseSchema()
+courses_schema = CourseSchema(many=True)
 
 
 @curriculum.route('/info', methods=['GET'])
@@ -254,9 +257,9 @@ def add_reference():
     return create_json_response('Fields Missing', 400, errors=errors)
 
 
-@curriculum.route('refs/<lang>', methods=['PUT'])
+@curriculum.route('refs/<id>', methods=['PUT'])
 @login_required
-def update_lang(id):
+def update_ref(id):
     global reference_schema
     ref = Reference.query.filter_by(id=id).first()
 
@@ -285,6 +288,82 @@ def delete_ref(id):
     except Exception as e:
         return create_json_response('Error', 404, error=e)
 
-"""
 
 """
+Course views
+"""
+
+
+@curriculum.route('/courses', methods=['GET'])
+def get_courses():
+    global courses_schema
+
+    courses = Course.query.all()
+    output = courses_schema.dump(courses)
+
+    return create_json_response('Success', 200, courses=output)
+
+
+@curriculum.route('/courses/<id>', methods=['GET'])
+def get_course(id):
+    global course_schema
+    try:
+        course = Course.query.filter_by(id=id).first()
+        if course:
+            output = course_schema.dump(course)
+            return create_json_response('Found', 200, course=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
+
+
+@curriculum.route('courses/add', methods=['POST'])
+@login_required
+def add_course():
+    global course_schema
+
+    course_name = request.form.get('course_name', None)
+    date_joined = request.form.get('date_joined', None)
+    date_completed = request.form.get('date_completed', None)
+
+    new_course, errors = Course.create_course(
+        course_name, date_joined, date_completed)
+
+    if not errors:
+        new_course.save()
+        output = course_schema.dump(new_course)
+        return create_json_response('Success', 201, created=output)
+    return create_json_response('Fields Missing', 400, errors=errors)
+
+
+@curriculum.route('courses/<id>', methods=['PUT'])
+@login_required
+def update_course(id):
+    global course_schema
+    course = Course.query.filter_by(id=id).first()
+
+    if not course:
+        return create_json_response('', 404)
+
+    course.course_name = request.form.get('course_name', course.course_name)
+    course.date_joined = request.form.get('date_joined', course.date_joined)
+    course.date_completed = request.form.get(
+        'date_completed', course.date_completed)
+
+    course.save()
+    output = course_schema.dump(course)
+    return create_json_response('Updated', 200, updated=output)
+
+
+@curriculum.route('/courses/<id>', methods=['DELETE'])
+def delete_courses(id):
+    global courses_schema
+    try:
+        course = Course.query.filter_by(id=id).first()
+        if course:
+            course.delete()
+            output = reference_schema.dump(course)
+            return create_json_response('Deleted', 200, course=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
