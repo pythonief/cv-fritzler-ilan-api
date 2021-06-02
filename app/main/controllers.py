@@ -6,11 +6,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    response = {
-        'message': 'Bienvenido a la pagina de inicio de mi CVapi',
-        'code': '200'
-    }
-    return jsonify(response), 200
+    return create_json_response('Bienvenido a la pagina de inicio de mi CVapi', 200)
 
 @main.route('/profile')
 @login_required
