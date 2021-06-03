@@ -14,8 +14,46 @@ class Job(BaseModel):
     company = db.Column(db.String(40), nullable=False)
     city = db.Column(db.String(40), nullable=False)
     date_joined = db.Column(db.DateTime(), nullable=False)
-    date_left = db.Column(db.DateTime(), nullable=False)
+    date_left = db.Column(db.DateTime(), nullable=True)
     current = db.Column(db.Boolean(), default=False)
+
+    def create_job(job_name, company, city, date_joined, date_left, current):
+        errors = []
+        if not job_name:
+            errors.append('field job_name requiered')
+        if not company:
+            errors.append('field company required')
+        if not city:
+            errors.append('field city required')
+        if not date_joined:
+            errors.append('field date_joined required')
+        if not current:
+            errors.append('field current required')
+
+        try:
+            date_joined = date_parser(date_joined)
+            date_left = date_parser(date_left if date_left else '31-12-2070')
+            current = True if current == 'True' or current == 'true' else False
+        except Exception:
+            errors.append(
+                "Date Fields doesn't recognize, expected: 31-12-1970 | 31.12.1970 | 31/12/1970")
+
+        if not errors:
+            return Job(
+                job_name=job_name,
+                company=company,
+                city=city,
+                date_joined=date_joined,
+                date_left=date_left,
+                current=current,
+            ), errors
+        return None, errors
+
+
+class JobSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Job
+        load_instance = True
 
 
 class Course(BaseModel):
@@ -46,6 +84,7 @@ class Course(BaseModel):
                 course_name=course_name, date_joined=date_joined, date_completed=date_completed), errors
         return None, errors
 
+
 class CourseSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Course
@@ -57,7 +96,7 @@ class Skill(BaseModel):
     __tablename__ = 'skills'
 
     name = db.Column(db.String(40), nullable=False)
-    description = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=False)
 
     @ staticmethod
     def create_skill(name, description):

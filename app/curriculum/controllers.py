@@ -1,9 +1,9 @@
-from operator import ge
 from app.utils import create_json_response
 from app.curriculum.models import Skill, SkillSchema
 from app.curriculum.models import Language, LanguageSchema
 from app.curriculum.models import Reference, ReferenceSchema
 from app.curriculum.models import Course, CourseSchema
+from app.curriculum.models import Job, JobSchema
 from flask import Blueprint, request
 from flask_login import login_required
 # Views
@@ -19,6 +19,8 @@ reference_schema = ReferenceSchema()
 references_schema = ReferenceSchema(many=True)
 course_schema = CourseSchema()
 courses_schema = CourseSchema(many=True)
+job_schema = JobSchema()
+jobs_schema = JobSchema(many=True)
 
 
 @curriculum.route('/info', methods=['GET'])
@@ -248,7 +250,7 @@ def add_reference():
     company = request.form.get('company', None)
     email = request.form.get('email', None)
 
-    new_ref, errors = Language.create_lang(name, email, company, description)
+    new_ref, errors = Reference.create_ref(name, email, company, description)
 
     if not errors:
         new_ref.save()
@@ -364,6 +366,90 @@ def delete_courses(id):
             course.delete()
             output = reference_schema.dump(course)
             return create_json_response('Deleted', 200, course=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
+
+
+"""
+Jobs views
+"""
+
+
+@curriculum.route('/jobs', methods=['GET'])
+def get_jobs():
+    global jobs_schema
+
+    jobs = Job.query.all()
+    output = jobs_schema.dump(jobs)
+
+    return create_json_response('Success', 200, jobs=output)
+
+
+@curriculum.route('/jobs/<id>', methods=['GET'])
+def get_job(id):
+    global job_schema
+    try:
+        job = Job.query.filter_by(id=id).first()
+        if job:
+            output = job_schema.dump(job)
+            return create_json_response('Found', 200, job=output)
+        return create_json_response('', 404)
+    except Exception as e:
+        return create_json_response('Error', 404, error=e)
+
+
+@curriculum.route('jobs/add', methods=['POST'])
+@login_required
+def add_job():
+    global job_schema
+
+    job_name = request.form.get('job_name', None)
+    company = request.form.get('company', None)
+    city = request.form.get('city', None)
+    date_joined = request.form.get('date_joined', None)
+    date_left = request.form.get('date_left', None)
+    current = request.form.get('current', None)
+
+    new_job, errors = Job.create_job(
+        job_name, company, city, date_joined, date_left, current)
+
+    if not errors:
+        new_job.save()
+        output = job_schema.dump(new_job)
+        return create_json_response('Success', 201, created=output)
+    return create_json_response('Fields Missing', 400, errors=errors)
+
+
+@curriculum.route('jobs/<id>', methods=['PUT'])
+@login_required
+def update_job(id):
+    global job_schema
+    job = Job.query.filter_by(id=id).first()
+
+    if not job:
+        return create_json_response('', 404)
+
+    job.job_name = request.form.get('job_name', job.job_name)
+    job.company = request.form.get('company', job.company)
+    job.city = request.form.get('city', job.city)
+    job.date_joined = request.form.get('date_joined', job.date_joined)
+    job.date_left = request.form.get('date_left', job.date_left)
+    current = request.form.get('current', job.current)
+    job.current = True if current == 'True' or current == 'true' else False
+
+    job.save()
+    output = job_schema.dump(job)
+    return create_json_response('Updated', 200, updated=output)
+
+
+@curriculum.route('/jobs/<id>', methods=['DELETE'])
+def delete_job(id):
+    try:
+        job = Job.query.filter_by(id=id).first()
+        if job:
+            job.delete()
+            return create_json_response('', 202)
         return create_json_response('', 404)
     except Exception as e:
         return create_json_response('Error', 404, error=e)
