@@ -5,7 +5,7 @@ from app.curriculum.models import Reference, ReferenceSchema
 from app.curriculum.models import Course, CourseSchema
 from app.curriculum.models import Job, JobSchema
 from flask import Blueprint, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 # Views
 
 curriculum = Blueprint('curriculum', __name__, url_prefix='/api')
